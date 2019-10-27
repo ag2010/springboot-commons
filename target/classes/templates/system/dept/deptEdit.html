@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>文章列表--layui后台管理模板 2.0</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" th:href="@{/system/layui/css/layui.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/system/css/public.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/common/js/zTree/css/zTreeStyle/zTreeStyle.css}" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="width:50%;">
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">部门名称</label>
+		<div class="layui-input-block">
+			<input type="text" id="dept_name" th:value="${deptInfo.dept_name}" class="layui-input" autocomplete="off" lay-verify="required" placeholder="请输入部门名称">
+			<input type="hidden" id="deptId" th:value="${deptInfo.id}">
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">所属部门</label>
+		<div class="layui-input-block">
+			<input type="text" id="pDept" autocomplete="off" th:value="${deptInfo.dept_path==''}?'根部门':${deptInfo.dept_path}" class="layui-input" lay-verify="required" placeholder="请选择所属部门">
+			<input type="hidden" id="pid" th:value="${deptInfo.pid}"/>
+			<input type="hidden" id="dept_path" th:value="${deptInfo.dept_path}"/>
+			<input type="hidden" id="level" th:value="${deptInfo.level}"/>
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">排序</label>
+		<div class="layui-input-block">
+			<input type="text" id="sort" autocomplete="off" th:value="${deptInfo.sort}==null?'0':${deptInfo.sort}" class="layui-input" lay-verify="number" placeholder="请输入排序">
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">备注</label>
+		<div class="layui-input-block">
+			<textarea id="note" placeholder="请输入备注" class="layui-textarea" th:text="${deptInfo.note}"></textarea>
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<div class="layui-input-block">
+			<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="addDept" th:text="${deptInfo.id>0}?'确定修改':'立即添加'"></button>
+			<button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">取消</button>
+		</div>
+	</div>
+</form>
+<script type="text/javascript" th:src="@{/system/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/common/js/jquery/jquery-3.2.1.min.js}" th:inline="none"></script>
+<script type="text/javascript" th:src="@{/common/js/zTree/js/jquery.ztree.core.min.js}" th:inline="none"></script>
+<script type="text/javascript" th:inline="none">
+layui.use(['form','table','element','laytpl','layer','tree'], function() {
+    var layer = layui.layer;
+	var form = layui.form;
+	var table = layui.table;
+    var laytpl = layui.laytpl;
+    var $=layui.jquery;
+
+
+    
+	//管理权限
+	function showDeptTreeDialog(){
+		layer.open({
+			type: 1,
+			title: '选择所属部门',
+			area: ['400px', '300px'],
+			offset: 'auto',
+			content: '<ul id="treeDepts" class="ztree" style="padding: 25px 80px;"></ul>',
+			btn: ['确定','关闭'],
+			btnAlign: 'c', 
+			yes: function(index){
+				var treeObj = $.fn.zTree.getZTreeObj("treeDepts");
+				var sNodes = treeObj.getSelectedNodes();
+				var choseNodeName;
+				var choseNodeId;
+				var choseNodePath;
+				var choseNodeLevel="0";
+		    	if (sNodes.length > 0) {
+		    		choseNodeName=sNodes[0].name;
+		    		choseNodeId=sNodes[0].id;
+		    		
+		    		var pathNodes=sNodes[0].getPath();
+		    		
+		    		if(pathNodes.length==1){//root
+		    			choseNodePath="";
+		    			choseNodeLevel="0";
+		    		}else if(pathNodes.length>1){
+			    		for(var i=1;i<pathNodes.length;i++){
+			    			if(i==1){
+			    				choseNodePath=pathNodes[i].name;
+			    			}else{
+			    				choseNodePath=choseNodePath+"/"+pathNodes[i].name;
+			    			}
+			    			choseNodeLevel=i;
+			    		}		    			
+		    		}
+				
+		    	}
+				
+				if(choseNodePath==""){
+					$("#pDept").val("根部门");
+				}else{
+					$("#pDept").val(choseNodePath);
+				}
+				
+				$("#pid").val(choseNodeId);
+				$("#dept_path").val(choseNodePath);
+				$("#level").val(choseNodeLevel);
+				layer.close(index);
+			}
+		});
+		layer.load(1);
+		var setting = {
+		    data: {
+		    		key:{
+		    			name:"name"
+		    		},
+		    		simpleData:{
+		    			enable: true,
+		    			idKey:"id",
+		    			pidKey:"pId",
+		    			rootId:"null"
+		    		}
+		    }
+
+		};
+		$.post("/system/allDeptTree",function(data) {
+			$.fn.zTree.init($("#treeDepts"), setting, data);
+			layer.closeAll('loading');
+		},"json");
+	}
+	
+    $('#pDept').on('click', function() {
+		
+    	showDeptTreeDialog();
+    	
+	});
+    
+    
+    
+    
+    
+    form.on("submit(addDept)",function(data){
+        //弹出loading
+        var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+
+        
+        var dps=$("#dept_path").val();
+        var dpname=$("#dept_name").val();
+        var dpaths="";
+        if(dps==null || dps==''){
+    			dpaths=dpname;
+	    }else{
+	    		dpaths=dps+"/"+dpname;
+	    }
+        
+        var qUrl="";
+		if($("#deptId").val()!=null && $("#deptId").val()!='' && $("#deptId").val()>0){
+			qUrl="/system/monfiyAddDept";
+		}else{
+			qUrl="/system/saveAddDept";
+		}
+		
+		
+
+
+        
+        $.post(qUrl,{
+	        	dept_path : dpaths,
+	        	pid : $("#pid").val(),
+	        id : $("#deptId").val(),
+	        	dept_name : $("#dept_name").val(),
+	        	level : $("#level").val(),
+	        	sort : $("#sort").val(),
+	        	note : $("#note").val(),
+	        	status : 1,
+         },function(res){
+             if(res.code==0){
+                 top.layer.close(index);
+                 top.layer.msg(res.msg);
+                 layer.closeAll("iframe");
+                 //刷新父页面
+                 parent.location.reload();
+             }else{
+            	 top.layer.close(index);
+                 layer.alert(data.msg);
+             }
+         });
+        return false;
+    })
+
+
+    
+});
+
+</script>
+</body>
+</html>

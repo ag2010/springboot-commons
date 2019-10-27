@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>文章列表--layui后台管理模板 2.0</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" th:href="@{/system/layui/css/layui.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/system/css/public.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/common/js/zTree/css/zTreeStyle/zTreeStyle.css}" media="all" />
+	
+<style type="text/css">
+.site-doc-icon{margin-bottom: 0px; font-size: 0;}
+.site-doc-icon li{display: inline-block; vertical-align: middle; width: 50px; line-height: 25px; padding: 10px 0; margin-right: -1px; margin-bottom: -1px; border: 1px solid #e2e2e2; font-size: 36px; text-align: center; color: #666; transition: all .3s; -webkit-transition: all .3s;}
+.site-doc-icon li .layui-icon{display: inline-block; font-size: 36px;}
+
+.site-doc-icon li .fontclass{display: none;}
+.site-doc-icon li .name{color: #c2c2c2;}
+.site-doc-icon li:hover{background-color: #f2f2f2; color: #000;}
+</style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="width:50%;">
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">菜单名称</label>
+		<div class="layui-input-block">
+			<input type="text" id="menu_name" th:value="${menuInfo.menu_name}" class="layui-input" autocomplete="off" lay-verify="required" placeholder="请输入菜单名称">
+			<input type="hidden" id="menuId" th:value="${menuInfo.id}">
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">上级菜单</label>
+		<div class="layui-input-block">
+			<input type="text" id="pMenu" th:value="${menuInfo.menu_path==''}?'根菜单':${menuInfo.menu_path}" autocomplete="off" class="layui-input" lay-verify="required" placeholder="请选择上级菜单">
+			<input type="hidden" id="pid" th:value="${menuInfo.pid}"/>
+			<input type="hidden" id="menu_path" th:value="${menuInfo.menu_path}"/>
+			<input type="hidden" id="level" th:value="${menuInfo.level}"/>
+			<input type="hidden" id="parent_code" th:value="${menuInfo.parent_code}"/>
+		</div>
+	</div>
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">菜单标识</label>
+		<div class="layui-input-block">
+			<input type="text" autocomplete="off" id="code" th:value="${menuInfo.code}" class="layui-input" lay-verify="required" placeholder="请输入菜单标识">
+		</div>
+	</div>	
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">菜单地址</label>
+		<div class="layui-input-block">
+			<input type="text" id="link_url" autocomplete="off" th:value="${menuInfo.link_url}" class="layui-input" placeholder="请输入菜单地址">
+		</div>
+	</div>
+	
+	<div class="magb15 layui-col-xs12">
+		<label class="layui-form-label">菜单图标</label>
+		
+		<div class="layui-input-block">
+			<button id="editMenuIconBtn" class="layui-btn layui-btn-sm layui-btn-primary">
+					<i class="layui-icon" id="iconClsShow" th:utext="${menuInfo.iconCls}">&#xe857;</i>
+			</button>
+			<input type="hidden" id="iconCls" th:value="${menuInfo.iconCls}"/>
+		</div>
+	</div>	
+	
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<label class="layui-form-label">排序</label>
+		<div class="layui-input-block">
+			<input type="text" id="sort" autocomplete="off" th:value="${menuInfo.sort}" class="layui-input" lay-verify="required" placeholder="请输入排序">
+		</div>
+	</div>
+
+	<div class="layui-form-item layui-row layui-col-xs12">
+		<div class="layui-input-block">
+			<button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="addMenu" th:text="${menuInfo.id>0}?'确定修改':'立即添加'"></button>
+			<button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">取消</button>
+		</div>
+	</div>
+</form>
+
+<script type="text/html" id="chooseIconModel">
+<ul class="menuicnos site-doc-icon">
+<li><i class="layui-icon">&#xe68e;</i></li>
+<li><i class="layui-icon">&#xe756;</i></li>
+<li><i class="layui-icon">&#xe65e;</i></li>
+<li><i class="layui-icon">&#xe715;</i></li>
+<li><i class="layui-icon">&#xe705;</i></li>
+<li><i class="layui-icon">&#xe620;</i></li>
+<li><i class="layui-icon">&#xe629;</i></li>
+<li><i class="layui-icon">&#xe60a;</i></li>
+<li><i class="layui-icon">&#xe606;</i></li>
+<li><i class="layui-icon">&#xe62d;</i></li>
+<li><i class="layui-icon">&#xe631;</i></li>
+<li><i class="layui-icon">&#xe654;</i></li>
+<li><i class="layui-icon">&#xe642;</i></li>
+<li><i class="layui-icon">&#xe640;s</i></li>
+<li><i class="layui-icon">&#xe621;</i></li>
+<li><i class="layui-icon">&#xe634;</i></li>
+<li><i class="layui-icon">&#xe635;</i></li>
+<li><i class="layui-icon">&#xe60b;</i></li>
+<li><i class="layui-icon">&#xe637;</i></li>
+<li><i class="layui-icon">&#xe61d;</i></li>
+<li><i class="layui-icon">&#xe612;</i></li>
+<li><i class="layui-icon">&#xe638;</i></li>
+<li><i class="layui-icon">&#xe613;</i></li>
+<li><i class="layui-icon">&#xe64c;</i></li>
+<li><i class="layui-icon">&#xe63a;</i></li>
+<li><i class="layui-icon">&#xe627;</i></li>
+<li><i class="layui-icon">&#xe63b;</i></li>
+<li><i class="layui-icon">&#xe63c;</i></li>
+<li><i class="layui-icon">&#xe62a;</i></li>
+<li><i class="layui-icon">&#xe64e;</i></li>
+<li><i class="layui-icon">&#xe624;</i></li>
+<li><i class="layui-icon">&#xe60e;</i></li>
+<li><i class="layui-icon">&#xe61e;</i></li>
+<li><i class="layui-icon">&#xe628;</i></li>
+<li><i class="layui-icon">&#xe609;</i></li>
+<li><i class="layui-icon">&#xe615;</i></li>
+<li><i class="layui-icon">&#xe614;</i></li>
+<li><i class="layui-icon">&#xe857;</i></li>
+<li><i class="layui-icon">&#xe657;</i></li>
+<li><i class="layui-icon">&#xe681;</i></li>
+<li><i class="layui-icon">&#xe6b2;</i></li>
+<li><i class="layui-icon">&#xe6ed;</i></li>
+<li><i class="layui-icon">&#xe6fc;</i></li>
+<li><i class="layui-icon">&#xe89f;</i></li>
+<li><i class="layui-icon">&#xe663;</i></li>
+<li><i class="layui-icon">&#xe659;</i></li>
+<li><i class="layui-icon">&#xe641;</i></li>
+<li><i class="layui-icon">&#xe692;</i></li>
+<li><i class="layui-icon">&#xe604;</i></li>
+<li><i class="layui-icon">&#xe650;</i></li>
+<li><i class="layui-icon">&#xe696;</i></li>
+<li><i class="layui-icon">&#xe62b;</i></li>
+<li><i class="layui-icon">&#xe667;</i></li>
+<li><i class="layui-icon">&#xe607;</i></li>
+<li><i class="layui-icon">&#xe619;</i></li>
+<li><i class="layui-icon">&#xe649;</i></li>
+<li><i class="layui-icon">&#xe637;</i></li>
+<li><i class="layui-icon">&#xe635;</i></li>
+<li><i class="layui-icon">&#xe6f2;</i></li>
+<li><i class="layui-icon">&#xe606;</i></li>
+<li><i class="layui-icon">&#xe897;</i></li>
+<li><i class="layui-icon">&#xe611;</i></li>
+<li><i class="layui-icon">&#xe63e;</i></li>
+<li><i class="layui-icon">&#xe615;</i></li>
+<li><i class="layui-icon">&#xe65c;</i></li>
+<li><i class="layui-icon">&#xe6a1;</i></li>
+<li><i class="layui-icon">&#xe617;</i></li>
+<li><i class="layui-icon">&#xe63f;</i></li>
+<li><i class="layui-icon">&#xe6a3;</i></li>
+<li><i class="layui-icon">&#xe602;</i></li>
+<li><i class="layui-icon">&#xe67f;</i></li>
+<li><i class="layui-icon">&#xe65f;</i></li>
+<li><i class="layui-icon">&#xe8d7;</i></li>
+<li><i class="layui-icon">&#xe637;</i></li>
+<li><i class="layui-icon">&#xe654;</i></li>
+<li><i class="layui-icon">&#xe63d;</i></li>
+<li><i class="layui-icon">&#xe647;</i></li>
+<li><i class="layui-icon">&#xe8ae;</i></li>
+<li><i class="layui-icon">&#xe65a;</i></li>
+<li><i class="layui-icon">&#xe645;</i></li>
+<li><i class="layui-icon">&#xe628;</i></li>
+<li><i class="layui-icon">&#xe658;</i></li>
+<li><i class="layui-icon">&#xe69c;</i></li>
+<li><i class="layui-icon">&#xe661;</i></li>
+<li><i class="layui-icon">&#xe634;</i></li>
+<li><i class="layui-icon">&#xe620;</i></li>
+<li><i class="layui-icon">&#xe60d;</i></li>
+<li><i class="layui-icon">&#xe656;</i></li>
+
+</ul>
+</script>
+
+
+<script type="text/javascript" th:src="@{/system/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/system/js/user/userAdd.js}"></script>
+<script type="text/javascript" th:src="@{/common/js/jquery/jquery-3.2.1.min.js}" th:inline="none"></script>
+<script type="text/javascript" th:src="@{/common/js/zTree/js/jquery.ztree.core.min.js}" th:inline="none"></script>
+<script type="text/javascript" th:inline="none">
+layui.use(['form','table','element','laytpl','layer','tree'], function() {
+    var layer = layui.layer;
+	var form = layui.form;
+	var table = layui.table;
+    var laytpl = layui.laytpl;
+    var $=layui.jquery;
+
+
+    
+	//管理权限
+	function showMenuTreeDialog(){
+		layer.open({
+			type: 1,
+			title: '选择上级菜单',
+			area: ['400px', '300px'],
+			offset: 'auto',
+			content: '<ul id="treeMenus" class="ztree" style="padding: 25px 80px;"></ul>',
+			btn: ['确定','关闭'],
+			btnAlign: 'c', 
+			yes: function(index){
+				var treeObj = $.fn.zTree.getZTreeObj("treeMenus");
+				var sNodes = treeObj.getSelectedNodes();
+				var choseNodeName;
+				var choseNodeId;
+				var choseNodePath;
+				var choseNodeLevel="0";
+				var pNodeName;
+		    	if (sNodes.length > 0) {
+		    		choseNodeName=sNodes[0].name;
+		    		choseNodeId=sNodes[0].id;
+		    		
+		    		var pathNodes=sNodes[0].getPath();
+		    		
+		    		if(pathNodes.length==1){//root
+		    			choseNodePath="";
+		    			choseNodeLevel="0";
+		    			pNodeName="";
+		    		}else if(pathNodes.length>1){
+			    		for(var i=1;i<pathNodes.length;i++){
+			    			if(i==1){
+			    				choseNodePath=pathNodes[i].name;
+			    				pNodeName=pathNodes[i].name;
+			    			}else{
+			    				choseNodePath=choseNodePath+"/"+pathNodes[i].name;
+			    			}
+			    			choseNodeLevel=i;
+			    		}		    			
+		    		}
+				
+		    	}
+				
+				if(choseNodePath==""){
+					$("#pMenu").val("根菜单");
+				}else{
+					$("#pMenu").val(choseNodePath);
+				}
+				
+				$("#pid").val(choseNodeId);
+				$("#menu_path").val(choseNodePath);
+				$("#level").val(choseNodeLevel);
+				$("#parent_code").val(pNodeName);
+				layer.close(index);
+			}
+		});
+		layer.load(1);
+		var setting = {
+		    data: {
+		    		key:{
+		    			name:"name"
+		    		},
+		    		simpleData:{
+		    			enable: true,
+		    			idKey:"id",
+		    			pidKey:"pId",
+		    			rootId:"null"
+		    		}
+		    }
+
+		};
+		$.post("/system/allMenuTree",function(data) {
+			$.fn.zTree.init($("#treeMenus"), setting, data);  
+			layer.closeAll('loading');
+		},"json");
+	}
+	
+    $('#pMenu').on('click', function() {
+		
+    		showMenuTreeDialog();
+    	
+	});
+    
+    
+    
+    
+    form.on("submit(addMenu)",function(data){
+        //弹出loading
+        var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+
+        var qUrl="";
+		if($("#menuId").val()!=null && $("#menuId").val()!='' && $("#menuId").val()>0){
+			qUrl="/system/monfiyAddMenu";
+		}else{
+			qUrl="/system/saveAddMenu";
+		}
+		
+        $.post(qUrl,{
+	        	pid : $("#pid").val(),
+	        	id : $("#menuId").val(),
+	        	menu_name : $("#menu_name").val(),
+	        	level : $("#level").val(),
+	        	sort : $("#sort").val(),
+	        	status : 1,
+	        	link_url:$("#link_url").val(),
+	        	code:$("#code").val(),
+	        	parent_code:$("#parent_code").val(),
+	        	iconCls:$("#iconCls").val()
+         },function(res){
+             if(res.code==0){
+                 top.layer.close(index);
+                 top.layer.msg(res.msg);
+                 layer.closeAll("iframe");
+                 //刷新父页面
+                 parent.location.reload();
+             }else{
+            	 top.layer.close(index);
+                 layer.alert(data.msg);
+             }
+         });
+        return false;
+    })
+
+    
+    	//添加按钮点击事件
+	$("#editMenuIconBtn").click(function(){
+		showChooseIcon();
+		return false;
+	});
+
+    	//显示表单弹窗
+	function showChooseIcon(){
+		layer.open({
+			type: 1,
+			title: "选择图标",
+			area: ['600px', '400px'],
+			offset: 'auto',
+			content: $("#chooseIconModel").html()
+		});
+		
+	}
+    
+    $("body").on("click",".menuicnos li",function(){
+    		$("#iconClsShow").text($(this).text());
+    		$("#iconCls").val($(this).text());
+        layer.closeAll();
+    });
+    
+});
+
+</script>
+</body>
+</html>

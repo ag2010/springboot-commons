@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hr.mapper.system.SmsRecordLogsMapper">
+	<sql id="smsRecordLogsEntitySql">
+		id,title,content,send_to,receive_account_id,status,send_time,add_time,note,template_id,message_type
+	</sql>
+	
+       <select id="findSmsRecordLogsByParamPageCount" resultType="Integer">
+	    select
+		count(0)
+		
+		from qr_sms_record
+		
+		where 1=1
+		<if test="title !=null and title !=''">
+			and title like
+			CONCAT('%',#{title},'%')
+		</if>
+		
+		<if test="beginTime !=null and beginTime !='' and endTime !=null and endTime !=''">
+			and send_time between #{beginTime} and #{endTime}
+		</if> 
+		
+		
+		<if test="send_to !=null and send_to !=''">
+			and send_to=#{send_to}
+		</if> 
+		
+		<if test="receiveAccountId !=null and receiveAccountId !=''">
+			and receive_account_id=#{receiveAccountId}
+		</if> 
+		
+		
+		
+		
+		
+		<if test="statusStr !=null and statusStr !=''">
+			and status=#{statusStr}
+		</if>
+		
+		<if test="messageTypeStr !=null and messageTypeStr !=''">
+			and message_type=#{messageTypeStr}
+		</if>
+		
+		
+		
+		order by send_time desc
+	</select>
+
+	<select id="findSmsRecordLogsByParam" resultType="SmsRecordLogs">
+	       select
+		<include refid="smsRecordLogsEntitySql"></include>
+		
+		
+		
+		from qr_sms_record
+			
+			
+	   where 1=1
+			
+		<if test="paramBean.title !=null and paramBean.title !=''">
+		
+			
+			and title like
+			CONCAT('%',#{paramBean.title},'%')
+		</if>
+		
+		<if test="paramBean.beginTime !=null and paramBean.beginTime !='' and paramBean.endTime !=null and paramBean.endTime !=''">
+			and send_time between #{paramBean.beginTime} and #{paramBean.endTime}
+		</if> 
+		
+		
+		
+		<if test="paramBean.statusStr !=null and paramBean.statusStr !=''">
+			and status=#{paramBean.statusStr}
+		</if>
+		
+		
+		<if test="paramBean.send_to !=null and paramBean.send_to !=''">
+			and send_to=#{paramBean.send_to}
+		</if>
+		
+		<if test="paramBean.receiveAccountId !=null and paramBean.receiveAccountId !=''">
+			and receive_account_id=#{paramBean.receiveAccountId}
+		</if>
+		
+		
+		<if test="paramBean.messageTypeStr !=null and paramBean.messageTypeStr !=''">
+			and message_type=#{paramBean.messageTypeStr}
+		</if>
+		
+		order by send_time desc limit #{currentDataIndex},#{limit}
+	</select>
+
+
+	<insert id="insertSMSLog">
+		insert into qr_sms_record(
+			title,
+			content,
+			send_to,
+			receive_account_id,
+			status,
+			send_time,
+			add_time,
+			note,
+			template_id,
+			message_type,
+			send_employee_id,
+			sms_trigger
+		)values(
+			#{title},
+			#{content},
+			#{send_to},
+			#{receive_account_id},
+			#{status},
+			#{send_time},
+			#{add_time},
+			#{note},
+			#{template_id},
+			#{message_type},
+			#{send_employee_id},
+			#{sms_trigger})
+	</insert>
+
+
+	
+
+</mapper>

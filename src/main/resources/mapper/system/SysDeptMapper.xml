@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hr.mapper.system.SysDeptMapper" >
+
+	<select id="fildAllDepts" resultType="SysDept">
+		select * from qr_sys_dept order by sort desc
+	</select>
+
+	<select id="listAllParentDept" resultType="SysDept">
+		select * from qr_sys_dept where pid = 0 order by sort desc
+	</select>
+	
+	<select id="listSubDeptByParentId"  resultType="SysDept">
+		select  * from qr_sys_dept where pid = #{parentId} order by sort desc
+	</select>
+		
+	<select id="findSysDeptById"  resultType="SysDept">
+		select  * from qr_sys_dept where id=#{deptId}
+	</select>
+	
+	<delete id="delteDept">
+		delete from qr_sys_dept where id=#{deptId}
+	</delete>
+	
+	<delete id="delteDeptByPid">
+		delete from qr_sys_dept where pid=#{id}
+	</delete>
+	<insert id="saveDept">
+		insert into qr_sys_dept (
+			pid,
+			dept_path,
+			dept_name,
+			level,
+			dept_pro,
+			dept_city,
+			dept_addr,
+			dept_letter,
+			sort,
+			note,
+			mobile,
+			status
+		) values (
+			#{pid},
+			#{dept_path},
+			#{dept_name},
+			#{level},
+			#{dept_pro},
+			#{dept_city},
+			#{dept_addr},
+			#{dept_letter},
+			#{sort},
+			#{note},
+			#{mobile},
+			#{status}
+		)
+	</insert>
+	
+	<update id="updateDept">
+		update qr_sys_dept set 	
+			pid=#{pid},
+			dept_name=#{dept_name},
+			dept_path=#{dept_path} ,
+			level=#{level},
+			dept_pro=#{dept_pro},
+			dept_city=#{dept_city},
+			dept_addr=#{dept_addr},
+			dept_letter=#{dept_letter},
+			note=#{note},
+			mobile=#{mobile},
+			sort=#{sort},
+			status=#{status}
+		where 
+			id=#{id}
+	</update>
+	
+
+
+</mapper>

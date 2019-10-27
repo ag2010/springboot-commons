@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html class="loginHtml">
+<head>
+	<meta charset="utf-8">
+	<title>登录页</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" th:href="@{/system/layui/css/layui.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/system/css/public.css}" media="all" />
+	<style type="text/css">
+		#imgCaptcha{
+			height: 36px;
+		}
+	.login_face{ margin:20px 20px 0px; width:200px; height:80px;text-align: center;vertical-align: middle;}
+	</style>
+		<script type="text/javascript">
+		if(self!=top){
+			//不是顶层页面
+			top.location.href="login.html";
+		}
+	</script>
+</head>
+
+<body class="loginBody">
+	<form id="useLogin" class="layui-form" method="post">
+		<div class="login_face">
+			 <img th:src="@{/common/images/gxdj_h_logo.png}" style="height:50px;">
+		</div>
+		<div class="layui-form-item input-item">
+			<label for="userName">用户名</label>
+			<input type="text" placeholder="请输入用户名" autocomplete="off" id="username" name="username" class="layui-input" lay-verify="required">
+		</div>
+		<div class="layui-form-item input-item">
+			<label for="password">密码</label>
+			<input type="password" placeholder="请输入密码" autocomplete="off" id="password" name="password" class="layui-input" lay-verify="required">
+		</div>
+		<div class="layui-form-item input-item" id="imgCode">
+			<label for="code">验证码</label>
+			<input type="text" placeholder="请输入验证码" autocomplete="off" name="codeImg" id="code" class="layui-input">
+			<img th:src="@{/system/captchaImage}" id="imgCaptcha" >
+			 <input id="timestamp" name="timestamp" value="${timestamp }" type="hidden" >
+		</div>
+		<div class="layui-form-item">
+			<button id="loginBtn" class="layui-btn layui-block" lay-filter="login" lay-submit>登录</button>
+		</div>
+	</form>
+	<script type="text/javascript" th:src="@{/system/layui/layui.js}"></script>
+	<script type="text/javascript" th:src="@{/system/js/login/login.js}"></script>
+	<script type="text/javascript" th:src="@{/system/js/cache.js}"></script>
+</body>
+</html>

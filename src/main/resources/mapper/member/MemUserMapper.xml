@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hr.mapper.member.MemUserMapper">
+	<sql id="baseColumnList">
+		`id`, `role_id`, `username`, `realname`, `nickname`, `password`, `gender`, `mobile`,
+		`email`, `certificate_type`, `certificate_no`, `credit`, `create_ip`, `create_time`,
+		`last_ip`, `last_time`, `update_time`, `login_count`, `status`, `salt`
+	</sql>
+	
+	<insert id="insert">
+		INSERT INTO qr_mem_user ( `id`, `role_id`, `username`, `realname`, `nickname`, `password`,
+		`gender`, `mobile`, `email`, `certificate_type`, `certificate_no`, `credit`, `create_ip`,
+		`last_ip`, `last_time`, `login_count`, `status`, `salt` ) VALUES( #{id}, #{roleId},
+		#{username}, #{realname}, #{nickname}, #{password}, #{gender}, #{mobile}, #{email},
+		#{certificateType}, #{certificateNo}, #{credit}, #{createIp}, #{lastIp}, #{lastTime},
+		#{loginCount}, #{status}, #{salt} )
+	</insert>
+	
+	<select id="findMemUserByUsername" resultType="MemUser">
+		select
+		<include refid="baseColumnList" />
+		from qr_mem_user where username=#{username}
+	</select>
+	
+	<select id="findAllMemUserByParamCount" resultType="Integer">
+		select count(1) from qr_mem_user mu where 1 = 1
+		<if test="username != null and username != ''">and mu.username like CONCAT('%', #{user_name}, '%')</if>
+		order by mu.create_time desc
+	</select>
+	
+	<select id="findAllMemUserByParam" resultType="MemUser">
+		select
+		<include refid="baseColumnList" />
+		from qr_mem_user mu where 1 = 1
+		<if test="paramBean.username != null and paramBean.username != ''">and mu.username like CONCAT('%', #{paramBean.user_name}, '%')</if>
+		order by mu.create_time desc limit #{currentDataIndex}, #{limit}
+	</select>
+</mapper>

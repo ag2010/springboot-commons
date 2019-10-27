@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>文章列表--layui后台管理模板 2.0</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" th:href="@{/system/layui/css/layui.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/system/css/public.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/common/js/zTree/css/zTreeStyle/zTreeStyle.css}" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="width:80%;">
+	<div class="layui-row">
+		<div class="magb15 layui-col-md6 layui-col-xs12">
+			<label class="layui-form-label">登录名</label>
+			<div class="layui-input-block">
+				<input type="text" id="user_name" class="layui-input userName" lay-verify="required" th:value="${sysuser.user_name}" readonly></input>		
+				
+			</div>
+		</div>
+		
+		<div class="magb15 layui-col-md6 layui-col-xs12">
+			<label class="layui-form-label">性别</label>
+			<div class="layui-input-block userSex">
+				<input type="radio" id="gender" name="gender"  title="男" th:checked="${sysuser.gender=='1'}" disabled>
+				<input type="radio" id="gender" name="gender"  title="女" th:checked="${sysuser.gender=='2'}" disabled>
+			</div>
+		</div>
+		
+	
+	</div>
+	<div class="layui-row">
+	
+	   <div class="magb15 layui-col-md6 layui-col-xs12">
+			<label class="layui-form-label">真实姓名</label>
+			<div class="layui-input-block">
+				<input type="text" id="real_name" class="layui-input userName" lay-verify="required"  th:value="${sysuser.real_name}" readonly>		
+			</div>
+		</div>
+	
+	    
+		<div class="magb15 layui-col-md6 layui-col-xs12">
+			<label class="layui-form-label">手机号码</label>
+			<div class="layui-input-block">
+				<input type="text" id="mobile" class="layui-input userName" lay-verify="required"  th:value="${sysuser.mobile}" readonly>		
+			</div>
+		</div>
+		
+	</div>
+	<div class="layui-row">
+	<div class="layui-form-item layui-row layui-col-xs6">
+				<label class="layui-form-label">所属部门</label>
+			<div class="layui-input-block">
+				<input type="text" id="pDept" class="layui-input userName" lay-verify="required"  th:value="${sysuser.dept_name}" readonly>
+				<input type="hidden" id="dept_id" th:value="${sysuser.dept_id}" class="layui-input userName"></input>
+			</div>
+	</div>
+	
+	
+			<div class="magb15 layui-col-md6 layui-col-xs6">
+			<label class="layui-form-label">所属角色</label>
+			<div class="layui-input-block">
+				<input type="text" id="pDept" class="layui-input userName" lay-verify="required"  th:value="${sysuser.role_name}" readonly>
+				<!-- <select id="role_id" class="userRole" lay-filter="userRole" th:value="${sysuser.role_id}">
+				
+					
+					<option th:each="roleObj,iterStat:${roleList}" th:value="${roleObj.id}" th:text="${roleObj.role_name}"></option>
+				</select> -->
+			</div>
+		</div>
+		</div>
+		<div class="layui-row">
+		   <div class="magb15 layui-col-md6 layui-col-xs6">
+			<label class="layui-form-label">邮箱</label>
+			<div class="layui-input-block">
+				<input type="text" id="email" class="layui-input userEmail"   th:value="${sysuser.email}" readonly>
+			</div>
+			</div>
+		<div class="magb15 layui-col-md6 layui-col-xs6">
+			<label class="layui-form-label">最近访问</label>
+			<div class="layui-input-block">
+				<input type="text" id="email" class="layui-input userEmail"  th:value="${sysuser.last_visit}" readonly>
+			</div>
+		</div>
+
+	
+	</div>
+	
+</form>
+<script type="text/javascript" th:src="@{/system/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/common/js/jquery/jquery-3.2.1.min.js}" th:inline="none"></script>
+<script type="text/javascript" th:src="@{/common/js/zTree/js/jquery.ztree.core.min.js}" th:inline="none"></script>
+<script type="text/javascript" th:src="@{/system/js/user/userAdd.js}"></script> 
+</body>
+</html>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hr.mapper.system.SysPermissionsMapper" >
+
+	<select id="findAllPerGroups" resultType="String">
+		select permissions_group from qr_sys_permissions group by permissions_group
+	</select>
+	
+	<select id="findAllPerListGroups" resultType="SysPermissions">
+		select * from qr_sys_permissions order by permissions_group,sort desc
+	</select>
+	
+	<select id="findAllPermissionsList" resultType="SysPermissions">
+		select id,permissions_name,permissions_group,permissions_code,note,sort from qr_sys_permissions where 1=1 order by sort desc,permissions_code asc
+	</select>
+	
+	<select id="findResourceByCode" resultType="SysPermissions">
+		select * from qr_sys_permissions where permissions_code=#{resourceCode}
+	</select>
+	
+	<select id="listAllPermissionsBySearchCount" resultType="Integer">
+		select count(0) from qr_sys_permissions where 1=1 
+		<if test="permissions_code!=null and permissions_code!=''">
+			And permissions_code like CONCAT('%',#{permissions_code},'%')
+		</if>
+		<if test="permissions_group!=null and permissions_group!=''">
+			And permissions_group=#{permissions_group}
+		</if>
+	</select>
+	
+	<select id="listAllPermissionsBySearch" resultType="SysPermissions">
+		select * from qr_sys_permissions where 1=1 
+		<if test="paramBean.permissions_code!=null and paramBean.permissions_code!=''">
+			And permissions_code like CONCAT('%',#{paramBean.permissions_code},'%')
+		</if>
+		<if test="paramBean.permissions_group!=null and paramBean.permissions_group!=''">
+			And permissions_group=#{paramBean.permissions_group}
+		</if>
+		 order by sort desc limit #{currentDataIndex},#{limit}
+	</select>
+	
+	<select id="listAllPermissions" resultType="SysPermissions">
+		select * from qr_sys_permissions order by sort desc
+	</select>
+	<select id="listAllPermissionsByCode" resultType="SysPermissions">
+		select * from qr_sys_permissions where menu_code=#{menu_code} order by sort desc
+	</select>
+	<insert id="saveAddResource">
+		insert into qr_sys_permissions (
+			permissions_name,
+			permissions_group,
+			permissions_code,
+			note,
+			sort
+		) values (
+			#{permissions_name},
+			#{permissions_group},
+			#{permissions_code},
+			#{note},
+			#{sort}
+		)
+	</insert>
+	<update id="updateResources">
+		update qr_sys_permissions set 
+			permissions_name=#{permissions_name},
+			permissions_group=#{permissions_group},
+			permissions_code=#{permissions_code},
+			note=#{note},
+			sort=#{sort}
+		where 
+			id=#{id}
+	</update>
+	<delete id="deleteResources">
+		delete from qr_sys_permissions where id=#{rsid}
+	</delete>
+	<select id="findResourceObj" resultType="SysPermissions">
+		select * from qr_sys_permissions where id=#{rsid}
+	</select>
+
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hr.mapper.system.SysUsersMapper">
+	<sql id="userEntitySql">
+		id,dept_id,role_id,passwd,user_number,user_name,real_name,nick_name,gender,mobile,email,status,create_ip,create_time,last_ip,last_visit,login_count,ext1
+	</sql>
+
+
+	<insert id="insertUser">
+		insert into qr_sys_users(
+			dept_id,
+			role_id,
+			user_number,
+			user_name,
+			real_name,
+			nick_name,
+			passwd,
+			mobile,
+			email,
+			status,
+			create_ip,
+			create_time,
+			last_ip,
+			last_visit,
+			login_count
+		)values(
+			#{dept_id},
+			#{role_id},
+			#{user_number},
+			#{user_name},
+			#{real_name},
+			#{nick_name},
+			#{passwd},
+			#{mobile},
+			#{email},
+			#{status},
+			#{create_ip},
+			#{create_time},
+			#{last_ip},
+			#{last_visit},
+			#{login_count})
+	</insert>
+	
+	
+	<update id="updateUserInfo">
+			update qr_sys_users set 
+				dept_id=#{dept_id},
+				role_id=#{role_id},
+				user_number=#{user_number},
+				real_name=#{real_name},
+				nick_name=#{nick_name},
+				mobile=#{mobile},
+				email=#{email} 
+			where 
+				id=#{id}
+	</update>
+	
+	<update id="modifyPwd">
+			update qr_sys_users set 
+				passwd=#{new_pwd} 
+			where 
+				id=#{id}
+	</update>
+	
+	
+
+	<delete id="deleteUserById">
+		delete from qr_sys_users where id=#{uid}
+	</delete>
+
+
+	<select id="findSysUsersByParamPageCount" resultType="Integer">
+		select count(0) from qr_sys_users u left join qr_sys_dept d on
+		u.dept_id=d.id left join qr_sys_role r on u.role_id=r.id where 1=1
+		<if test="dept_id>0">
+			and u.dept_id=#{dept_id}
+		</if>
+		<if test="role_id>0">
+			and u.role_id=#{role_id}
+		</if>
+		<if test="user_name!=null and user_name!=''">
+			and u.user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		<if test="real_name!=null and real_name!=''">
+			and u.real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="nick_name!=null and nick_name!=''">
+			and u.nick_name like CONCAT('%',#{nick_name},'%')
+		</if>
+		<if test="mobile!=null and mobile!=''">
+			and u.mobile like CONCAT('%',#{mobile},'%')
+		</if>
+		<if test="status>0">
+			and u.status=#{status}
+		</if>
+		order by u.create_time desc
+	</select>
+
+	<select id="findSysUsersByParam" resultType="SysUsers">
+		select
+		u.id,u.dept_id,u.role_id,u.user_number,u.user_name,u.real_name,u.nick_name,u.gender,u.mobile,u.email,u.status,u.create_ip,u.create_time,u.last_ip,u.last_visit,u.login_count,u.ext1,d.dept_name,r.role_name
+		from qr_sys_users u left join qr_sys_dept d on u.dept_id=d.id left
+		join qr_sys_role r on u.role_id=r.id where 1=1
+		<if test="paramBean.dept_id>0">
+			and u.dept_id=#{paramBean.dept_id}
+		</if>
+		<if test="paramBean.role_id>0">
+			and u.role_id=#{paramBean.role_id}
+		</if>
+		<if test="paramBean.user_name!=null and paramBean.user_name!=''">
+			and u.user_name like CONCAT('%',#{paramBean.user_name},'%')
+		</if>
+		<if test="paramBean.real_name!=null and paramBean.real_name!=''">
+			and u.real_name like CONCAT('%',#{paramBean.real_name},'%')
+		</if>
+		<if test="paramBean.nick_name!=null and paramBean.nick_name!=''">
+			and u.nick_name like CONCAT('%',#{paramBean.nick_name},'%')
+		</if>
+		<if test="paramBean.mobile!=null and paramBean.mobile!=''">
+			and u.mobile like CONCAT('%',#{paramBean.mobile},'%')
+		</if>
+		<if test="paramBean.status>0">
+			and u.status=#{paramBean.status}
+		</if>
+		order by u.create_time desc limit #{currentDataIndex},#{limit}
+	</select>
+
+
+
+	<select id="findAllSysUsers" resultType="SysUsers">
+		select
+		<include refid="userEntitySql" />
+		from qr_sys_users order by create_time desc
+	</select>
+
+	<select id="findSysUsersByUserName" resultType="SysUsers">
+		select id,dept_id,role_id,user_number,user_name,real_name,nick_name,passwd,gender,mobile,email,status,create_ip,create_time,last_ip,last_visit,login_count,ext1 from qr_sys_users where user_name=#{userName}
+	</select>
+
+	<select id="findSysUsersById" resultType="SysUsers">
+		select
+		<include refid="userEntitySql" />
+		from qr_sys_users where id=#{uid}
+	</select>
+
+	<select id="login" resultType="SysUsers">
+		select
+		<include refid="userEntitySql" />
+		from qr_sys_users where user_name=#{loginName} and passwd=#{pwd}
+	</select>
+
+</mapper>

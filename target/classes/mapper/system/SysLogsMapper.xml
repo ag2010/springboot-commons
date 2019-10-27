@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hr.mapper.system.SysLogsMapper">
+	<sql id="sysLogsEntitySql">
+		id,user_id,user_name,oper_act,log_memo,log_ip,user_os,browser,create_time,status
+	</sql>
+	<insert id="addSysLog">
+		insert into qr_sys_logs(
+			user_id,
+			user_name,
+			oper_act,
+			log_memo,
+			log_ip,
+			user_os,
+			browser,
+			create_time,
+			status
+		)values(
+			#{user_id},
+			#{user_name},
+			#{oper_act},
+			#{log_memo},
+			#{log_ip},
+			#{user_os},
+			#{browser},
+			#{create_time},
+			#{status})		
+	</insert>
+
+       <select id="findSysLogsByParamPageCount" resultType="Integer">
+	    select
+		count(0)
+		
+		from qr_sys_logs
+		
+		where 1=1
+		<if test="user_name !=null and user_name !=''">
+			and user_name like
+			CONCAT('%',#{user_name},'%')
+		</if>
+		
+		<if test="start !=null and start !='' and end !=null and end !=''">
+			and create_time between #{start} and #{end}
+		</if> 
+		
+		<if test="userIdStr !=null and userIdStr !=''">
+			and user_id = #{userIdStr}
+		</if> 
+		
+		
+		
+		<if test="statusStr !=null and statusStr !=''">
+			and status=#{statusStr}
+		</if>
+		
+		order by create_time desc
+	</select>
+
+	<select id="findSysLogsByParam" resultType="SysLogs">
+	       select
+		<include refid="sysLogsEntitySql"></include>
+		
+		
+		from qr_sys_logs
+			
+			
+	   where 1=1
+			
+		<if test="paramBean.user_name !=null and paramBean.user_name !=''">
+		
+			
+			and user_name like
+			CONCAT('%',#{paramBean.user_name},'%')
+		</if>
+		
+			<if test="paramBean.start !=null and paramBean.start !='' and paramBean.end !=null and paramBean.end !=''">
+			and create_time between #{paramBean.start} and #{paramBean.end}
+		</if>
+		
+		<if test="paramBean.userIdStr !=null and paramBean.userIdStr !=''">
+			and user_id=#{paramBean.userIdStr}
+		</if> 
+		
+		
+		
+		<if test="paramBean.statusStr !=null and paramBean.statusStr !=''">
+			and status=#{paramBean.statusStr}
+		</if>
+		order by create_time desc limit #{currentDataIndex},#{limit}
+	</select>
+
+
+
+	
+
+</mapper>

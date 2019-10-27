@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hr.mapper.system.SysRoleMapper">
+
+    <select id="findSysRoleById" resultType="sysRole">
+       select id,dept_id,role_name,sort,note,role_menu,role_permissions,status,ext1 from qr_sys_role where id=#{roleId}
+    </select>
+    
+    
+	<select id="listAllRoles"  resultType="SysRole" >
+		select * from qr_sys_role order by sort desc
+	</select>
+	
+	
+	<delete id="deleteRoleById" parameterType="String">
+		delete from qr_sys_role where id=#{role_id}
+	</delete>
+	
+	<!-- 添加 -->
+	<insert id="insertRole">
+		insert into qr_sys_role (
+			role_name,
+			sort,
+			note,
+			status
+		) values (
+			#{role_name},
+			#{sort},
+			#{note},
+			#{status}
+		)
+	</insert>
+	
+	<select id="findRoleMenusByCode"  resultType="SysRole">
+		select * from qr_sys_role where role_menu like CONCAT('%',#{menu_code},'%') 
+	</select>
+	
+	
+	<select id="findRoleResourceByCode" resultType="SysRole">
+		select * from qr_sys_role where role_permissions like CONCAT('%',#{oldCode},'%') 
+	</select>
+	
+	<update id="saveRoleMenus">
+		update qr_sys_role set role_menu = #{role_menu} where id = #{rid}
+	</update>
+	<update id="saveRoleResources">
+		update qr_sys_role set role_permissions = #{role_permissions} where id = #{rid}
+	</update>
+	
+		<!-- 编辑角色 -->
+	<update id="editRole">
+		update qr_sys_role set role_name = #{role_name},sort=#{sort},note=#{note} where id = #{id}
+	</update>
+	
+	<update id="editRoleStatus">
+		update qr_sys_role set status=#{status} where id=#{roleId}
+	</update>
+	
+	<update id="editRoleMenuPers">
+		update qr_sys_role set role_menu=#{menuPers} where id=#{roleId}
+	</update>
+
+</mapper>
